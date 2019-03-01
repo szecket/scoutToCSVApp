@@ -1,0 +1,814 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScoutFormsToCSV</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <form id='scoutingForm' onsubmit="check()">
+    <div class="grid-x">
+      <div class="cell small-12" data-sticky-container>
+        <div class="callout dark tight sticky" data-options="stickyOn: small" data-sticky data-margin-top="0">
+          <div class="grid-x grid-padding-x">
+            <div class='cell small-3 small-offset-3 text-center'>
+              <input id='submit-form' class='success button ' type='button' value="Add scout form to match, and clear form" />
+            </div>
+            <div class='cell small-3'><div id='formCount'></div> forms filled out since last copy</div>
+            <div class='cell auto text-right'>
+              <input id='newMatch' class='button ' type='button' value="Copy latest CSV to clipboard" />
+              <!-- <button onclick="clear('#csv')" id='clearCSV' class='button'>New Match</button> -->
+            </div>
+          </div>
+        </div>
+        <!-- This sticky element would stick to the window, with a marginTop of 0 -->
+      </div>
+      <div class="grid-container">
+
+        <div class="grid-x top-of-page grid-padding-x ">
+
+        </div>
+        <div class='grid-container'>
+          <div class='grid-x grid-padding-x'>
+
+            <!-- LEFT SIDE -->
+            <div class="medium-6 cell">
+              <strong>Scouting Data</strong>
+              <div class='callout warning'>
+                <div class=" grid-x grid-padding-x">
+                  <div class="medium-12 cell">
+                    <label>Scout Name</label>
+                    <select  class='required' id='scoutName' name='scoutName'>
+                    </select>
+                  </div>
+                  <div class="medium-12 cell">
+                    <label>Team Number</label>
+                    <select  class='required' id='teamNumber' name='teamNumber'>
+                    </select>
+                  </div>
+                  <div class="medium-12 cell">
+                    <label>Match Number</label>
+                    <input type="number" step='1' name='matchNumber' id='matchNumber'  />
+                  </div>
+                  <div class="auto cell">
+                    <div class="switch ">
+                      <label class='color-dark'>Is the robot missing the match?</label>
+                      <input class="switch-input" name="attendance" id="attendance" type="checkbox" name="attendance">
+                      <label class="switch-paddle" for="attendance">
+                        <span class="switch-inactive" aria-hidden="no">No</span>
+                        <span class="switch-active" aria-hidden="yes">Yes</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <strong>Sandstorm Period</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-7 medium-offset-5 cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated2 auto cell">
+                          Didn't Try
+                        </div>
+                        <div class="rotated2 auto cell">
+                          Tried but failed
+                        </div>
+                        <div class="rotated2 auto cell">
+                          Succeeded
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4 ">
+                      <div>Quick Drop from level 2</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="sand-qd1" name="sand-qd" value="Didn't Try">
+                          <label class="button" for="sand-qd1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-qd2" name="sand-qd" value="Tried but Failed">
+                          <label class="button" for="sand-qd2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-qd3" name="sand-qd" value="Succeeded">
+                          <label class="button" for="sand-qd3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4">
+                      <div>Hatch Panel</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="sand-hp1" name="sand-hp" value="Didn't Try">
+                          <label class="button" for="sand-hp1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-hp2" name="sand-hp" value="Tried but Failed">
+                          <label class="button" for="sand-hp2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-hp3" name="sand-hp" value="Succeeded">
+                          <label class="button" for="sand-hp3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4">
+                      <div>Cargo Ball</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="sand-cb1" name="sand-cb" value="Didn't Try">
+                          <label class="button" for="sand-cb1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-cb2" name="sand-cb" value="Tried but Failed">
+                          <label class="button" for="sand-cb2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="sand-cb3" name="sand-cb" value="Succeeded">
+                          <label class="button" for="sand-cb3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <strong>Hatch Panel (SPEED of GETTING and SCORING)</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-9 medium-offset-3 cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated3 auto cell">
+                          Didn't Try
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Bad
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Okay
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Good
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Excellent
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Cargo Ship</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="ch-cargo1" name="ch-cargo" value="Didn't Try">
+                          <label class="button" for="ch-cargo1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-cargo2" name="ch-cargo" value="Bad">
+                          <label class="button" for="ch-cargo2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-cargo3" name="ch-cargo" value="Okay">
+                          <label class="button" for="ch-cargo3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-cargo4" name="ch-cargo" value="Good">
+                          <label class="button" for="ch-cargo4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-cargo5" name="ch-cargo" value="Excellent">
+                          <label class="button" for="ch-cargo5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Low Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="ch-low-rocket1" name="ch-low-rocket" value="Didn't Try">
+                          <label class="button" for="ch-low-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-low-rocket2" name="ch-low-rocket" value="Bad">
+                          <label class="button" for="ch-low-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-low-rocket3" name="ch-low-rocket" value="Okay">
+                          <label class="button" for="ch-low-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-low-rocket4" name="ch-low-rocket" value="Good">
+                          <label class="button" for="ch-low-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-low-rocket5" name="ch-low-rocket" value="Excellent">
+                          <label class="button" for="ch-low-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Middle Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="ch-middle-rocket1" name="ch-middle-rocket" value="Didn't Try">
+                          <label class="button" for="ch-middle-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-middle-rocket2" name="ch-middle-rocket" value="Bad">
+                          <label class="button" for="ch-middle-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-middle-rocket3" name="ch-middle-rocket" value="Okay">
+                          <label class="button" for="ch-middle-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-middle-rocket4" name="ch-middle-rocket" value="Good">
+                          <label class="button" for="ch-middle-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-middle-rocket5" name="ch-middle-rocket" value="Excellent">
+                          <label class="button" for="ch-middle-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>High Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="ch-high-rocket1" name="ch-high-rocket" value="Didn't Try">
+                          <label class="button" for="ch-high-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-high-rocket2" name="ch-high-rocket" value="Bad">
+                          <label class="button" for="ch-high-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-high-rocket3" name="ch-high-rocket" value="Okay">
+                          <label class="button" for="ch-high-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-high-rocket4" name="ch-high-rocket" value="Good">
+                          <label class="button" for="ch-high-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="ch-high-rocket5" name="ch-high-rocket" value="Excellent">
+                          <label class="button" for="ch-high-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <strong>Cargo Ball (SPEED of GETTING and SCORING)</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-9 medium-offset-3 cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated3 auto cell">
+                          Didn't Try
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Bad
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Okay
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Good
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Excellent
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Cargo Ship</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="cc-cargo1" name="cc-cargo" value="Didn't Try">
+                          <label class="button" for="cc-cargo1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-cargo2" name="cc-cargo" value="Bad">
+                          <label class="button" for="cc-cargo2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-cargo3" name="cc-cargo" value="Okay">
+                          <label class="button" for="cc-cargo3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-cargo4" name="cc-cargo" value="Good">
+                          <label class="button" for="cc-cargo4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-cargo5" name="cc-cargo" value="Excellent">
+                          <label class="button" for="cc-cargo5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Low Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="cc-low-rocket1" name="cc-low-rocket" value="Didn't Try">
+                          <label class="button" for="cc-low-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-low-rocket2" name="cc-low-rocket" value="Bad">
+                          <label class="button" for="cc-low-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-low-rocket3" name="cc-low-rocket" value="Okay">
+                          <label class="button" for="cc-low-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-low-rocket4" name="cc-low-rocket" value="Good">
+                          <label class="button" for="cc-low-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-low-rocket5" name="cc-low-rocket" value="Excellent">
+                          <label class="button" for="cc-low-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Middle Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="cc-middle-rocket1" name="cc-middle-rocket" value="Didn't Try">
+                          <label class="button" for="cc-middle-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-middle-rocket2" name="cc-middle-rocket" value="Bad">
+                          <label class="button" for="cc-middle-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-middle-rocket3" name="cc-middle-rocket" value="Okay">
+                          <label class="button" for="cc-middle-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-middle-rocket4" name="cc-middle-rocket" value="Good">
+                          <label class="button" for="cc-middle-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-middle-rocket5" name="cc-middle-rocket" value="Excellent">
+                          <label class="button" for="cc-middle-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>High Rocket</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="cc-high-rocket1" name="cc-high-rocket" value="Didn't Try">
+                          <label class="button" for="cc-high-rocket1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-high-rocket2" name="cc-high-rocket" value="Bad">
+                          <label class="button" for="cc-high-rocket2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-high-rocket3" name="cc-high-rocket" value="Okay">
+                          <label class="button" for="cc-high-rocket3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-high-rocket4" name="cc-high-rocket" value="Good">
+                          <label class="button" for="cc-high-rocket4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="cc-high-rocket5" name="cc-high-rocket" value="Excellent">
+                          <label class="button" for="cc-high-rocket5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <!-- RIGHT SIDE -->
+            <div class="medium-6 cell">
+              <strong>Maneuverability</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-9 medium-offset-3 cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated3 auto cell">
+                          N/A
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Bad
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Okay
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Good
+                        </div>
+                        <div class="rotated3 auto cell">
+                          Excellent
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Driving and Speed</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-ds1" name="maneuverability-ds" value="N/A">
+                          <label class="button" for="maneuverability-ds1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-ds2" name="maneuverability-ds" value="Bad">
+                          <label class="button" for="maneuverability-ds2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-ds3" name="maneuverability-ds" value="Okay">
+                          <label class="button" for="maneuverability-ds3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-ds4" name="maneuverability-ds" value="Good">
+                          <label class="button" for="maneuverability-ds4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-ds5" name="maneuverability-ds" value="Excellent">
+                          <label class="button" for="maneuverability-ds5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Being Attacked</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-being-attacked1" name="maneuverability-being-attacked" value="N/A">
+                          <label class="button" for="maneuverability-being-attacked1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-being-attacked2" name="maneuverability-being-attacked" value="Bad">
+                          <label class="button" for="maneuverability-being-attacked2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-being-attacked3" name="maneuverability-being-attacked" value="Okay">
+                          <label class="button" for="maneuverability-being-attacked3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-being-attacked4" name="maneuverability-being-attacked" value="Good">
+                          <label class="button" for="maneuverability-being-attacked4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-being-attacked5" name="maneuverability-being-attacked" value="Excellent">
+                          <label class="button" for="maneuverability-being-attacked5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-3 ">
+                      <div>Attacking Opponents</div>
+                    </div>
+                    <div class='medium-9 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-attacking1" name="maneuverability-attacking" value="N/A">
+                          <label class="button" for="maneuverability-attacking1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-attacking2" name="maneuverability-attacking" value="Bad">
+                          <label class="button" for="maneuverability-attacking2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-attacking3" name="maneuverability-attacking" value="Okay">
+                          <label class="button" for="maneuverability-attacking3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-attacking4" name="maneuverability-attacking" value="Good">
+                          <label class="button" for="maneuverability-attacking4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="maneuverability-attacking5" name="maneuverability-attacking" value="Excellent">
+                          <label class="button" for="maneuverability-attacking5">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <strong>End Game</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-7 medium-offset-5 cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated2 auto cell">
+                          Didn't Try
+                        </div>
+                        <div class="rotated2 auto cell">
+                          Tried but failed
+                        </div>
+                        <div class="rotated2 auto cell">
+                          Succeeded
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4 ">
+                      <div>HAB Level 1</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab1_1" name="end-hab1" value="Didn't Try">
+                          <label class="button" for="end-hab1_1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab1_2" name="end-hab1" value="Tried but Failed">
+                          <label class="button" for="end-hab1_2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab1_3" name="end-hab1" value="Succeeded">
+                          <label class="button" for="end-hab1_3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4">
+                      <div>HAB Level 2</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab2_1" name="end-hab2" value="Didn't Try">
+                          <label class="button" for="end-hab2_1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab2_2" name="end-hab2" value="Tried but Failed">
+                          <label class="button" for="end-hab2_2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab2_3" name="end-hab2" value="Succeeded">
+                          <label class="button" for="end-hab2_3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="medium-4">
+                      <div>HAB Level 3</div>
+                    </div>
+                    <div class='medium-7 medium-offset-1 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab3_1" name="end-hab3" value="Didn't Try">
+                          <label class="button" for="end-hab3_1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab3_2" name="end-hab3" value="Tried but Failed">
+                          <label class="button" for="end-hab3_2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="end-hab3_3" name="end-hab3" value="Succeeded">
+                          <label class="button" for="end-hab3_3">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+
+              <strong>Negatives (Check all that apply)</strong>
+              <div class="callout light">
+                <div class='grid-container'>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class="checkbox">
+                    <label for='neg-foul'>
+                    <input type="checkbox" id="neg-foul" name="neg-foul">
+                      <span class="custom-checkbox"></span>
+                    Caused Foul</label>
+                  </div>
+                  </div>
+                  <div class=" grid-x grid-padding-x">
+                    <div class="checkbox">
+                    <label for='neg-stuck'>
+                    <input type="checkbox" id="neg-stuck" name="neg-stuck">
+                      <span class="custom-checkbox"></span>
+                    Game piece got stuck in robot</label>
+                  </div>
+                  </div>
+                  <div class=" grid-x grid-padding-x">
+                    <div class="checkbox">
+                    <label for='neg-tipped'>
+                    <input type="checkbox" id="neg-tipped" name="neg-tipped" >
+                      <span class="custom-checkbox"></span>
+                    Tipped over</label>
+                  </div>
+                  </div>
+                  <div class=" grid-x grid-padding-x">
+                    <div class="checkbox">
+                    <label for='neg-damage'>
+                    <input type="checkbox" id="neg-damage" name="neg-damage">
+                      <span class="custom-checkbox"></span>
+                    Apparent malfunction or damage</label>
+                  </div>
+                  </div>
+                  <div class=" grid-x grid-padding-x">
+                    <div class="checkbox">
+                    <label for='neg-stopped'>
+                    <input type="checkbox" id="neg-stopped" name="neg-stopped">
+                      <span class="custom-checkbox"></span>
+                    Stopped moving for extended period of time</label>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
+              <strong>Overall Performance</strong>
+              <div class="callout light tall1">
+                <div class='grid-container'>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class='auto cell'>
+                      <div class=" grid-x grid-padding-x">
+                        <div class="rotated1  auto cell">
+                          Bad
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Mediocre
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Okay
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Good
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Very Good
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Excellent
+                        </div>
+                        <div class="rotated1  auto cell">
+                          Phenomenal
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class=" grid-x grid-padding-x">
+                    <div class='medium-12 cell'>
+                      <div class="button-group round toggle grid-x grid-padding-x">
+                        <div class="auto cell">
+                          <input type="radio" id="performance1" name="performance" value="Bad">
+                          <label class="button" for="performance1">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance2" name="performance" value="Mediocre">
+                          <label class="button" for="performance2">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance3" name="performance" value="Okay">
+                          <label class="button" for="performance3">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance4" name="performance" value="Good">
+                          <label class="button" for="performance4">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance5" name="performance" value="Very Good">
+                          <label class="button" for="performance5">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance6" name="performance" value="Excellent">
+                          <label class="button" for="performance6">O</label>
+                        </div>
+                        <div class="auto cell">
+                          <input type="radio" id="performance7" name="performance" value="Phenomenal">
+                          <label class="button" for="performance7">O</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid-x grid-padding-x">
+                <dir class='auto cell'>
+                  <label>Comments
+                    <textarea name="endgameComments" placeholder="Comments on the drive team itself? (awful human player, argued a lot, widely cheered for, etc.)" rows='4' cols='80'></textarea>
+                  </label>
+                </dir>
+              </div>
+            </div>
+
+            <div class="grid-x grid-padding-x">
+              <textarea class='small-12 cell' id='csv'></textarea>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </form>
+
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js');
+      window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');
+    </script>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script src="./node_modules/what-input/dist/what-input.js"></script>
+    <script src="./node_modules/foundation-sites/dist/js/foundation.js"></script>
+    <script src="./js/app.js"></script>
+    <script>if (window.module) module = window.module;</script>
+  </body>
+  </html>

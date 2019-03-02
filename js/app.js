@@ -15,9 +15,10 @@ const $homedir = $os.homedir();
 if (!$fs.existsSync($homedir+'/scouting')){
     $fs.mkdirSync($homedir+'/scouting');
 }
-// const remote = require('electron').remote;
-// const app = remote.app;
-// console.log(app.getAppPath());
+const remote = require('electron').remote;
+const $app = remote.app;
+console.log($app.getAppPath());
+
 auto=true;
 
 jQuery( document ).ready(function( $ ) {
@@ -39,7 +40,7 @@ function parseTeams(){
      }));
     for (var i=0;i<rawdata.length;i++){
       var fields = rawdata[i].split(',');
-      if (i>5){
+      if (i>0){
         $('select[name=teamNumber]')
          .append($("<option>",{
            value:fields[0],
@@ -181,7 +182,7 @@ $('#newMatch').click(function(){
   $('#matchNumber').val(Number($('#matchNumber').val())+1);
 });
 function saveToCSVFile(v){
-  // $fs.appendFile(app.getAppPath()+"/scouting/match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
+  // $fs.appendFile($app.getAppPath()+"/../../../scouting/match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
   $fs.appendFile($homedir+"/scouting/match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
     if(err) {
         return console.log(err);

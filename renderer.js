@@ -4,4 +4,4 @@
 const {webFrame} = require('electron')
 
 // Set the zoom factor to 200%
-webFrame.setZoomFactor(0.65);
+webFrame.setZoomFactor(0.95);

@@ -9,6 +9,7 @@ var $matchNumber = 0;
 var $forms = 0;
 var $teams = [];
 var $scouts = [];
+var $requiredSatisfied = false;
 const $fs = require('fs');
 const $os = require('os');
 const $homedir = $os.homedir();
@@ -27,54 +28,71 @@ jQuery( document ).ready(function( $ ) {
   $('#formCount').html($forms);
   parseTeams();
   parseScouts();
+  console.log('READY!')
+  clearValues();
 });
 
 function parseTeams(){
   $fs.readFile($homedir+'/scouting/teams.csv', 'utf8', function(err, contents) {
-    var rawdata = contents.split(/\n+/);
-    $('select[name=teamNumber]').empty()
+    try{
+      var rawdata = contents.split(/\n+/);
+      $('select[name=teamNumber]').empty()
       .append($("<option>",{
-       text:'Pick a team',
-       selected:true,
-       disabled:true
-     }));
-    for (var i=0;i<rawdata.length;i++){
-      var fields = rawdata[i].split(',');
-      if (i>0){
-        $('select[name=teamNumber]')
-         .append($("<option>",{
-           value:fields[0],
-           text:fields[1]
-         }));
-        $teams.push([fields[0],fields[1]]);
+        text:'Pick a team',
+        selected:true,
+        disabled:true
+      }));
+      for (var i=0;i<rawdata.length;i++){
+        var fields = rawdata[i].split(',');
+        if (i>0){
+          $('select[name=teamNumber]')
+          .append($("<option>",{
+            value:fields[0],
+            text:fields[0]+' ---> '+fields[1]
+          }));
+          $teams.push([fields[0],fields[1]]);
+        }
+
       }
+      $('select[name=teamNumber]').val('Pick a team');
+      console.log('teams',$teams);
+      $('input[name=teamNumber]').remove();
     }
-
-    console.log('teams',$teams);
+    catch(err) {
+      console.log("caught in teamNumber")
+      $('select[name=teamNumber]').remove();
+    }
+    $('#teamNumber').val('');
   });
-
 }
 function parseScouts(){
   $fs.readFile($homedir+'/scouting/scouts.csv', 'utf8', function(err, contents) {
-    var rawdata = contents.split(/\n+/);
-    $('select[name=scoutName]').empty()
+    try{
+      var rawdata = contents.split(/\n+/);
+      $('select[name=scoutName]').empty()
       .append($("<option>",{
-       text:'Pick a scout',
-       selected:true,
-       disabled:true
-     }));
-     for (var i=0;i<rawdata.length;i++){
-      var fields = rawdata[i].split(',');
-      if (i>0){
-        $('select[name=scoutName]')
-        .append($("<option>",{
-          value:fields[0],
-          text:fields[0]
-        }));
-        $scouts.push(fields[0]);
+        text:'Pick a scout',
+        selected:true,
+        disabled:true
+      }));
+      for (var i=0;i<rawdata.length;i++){
+        var fields = rawdata[i].split(',');
+        if (i>0){
+          $('select[name=scoutName]')
+          .append($("<option>",{
+            value:fields[0],
+            text:fields[0]
+          }));
+          $scouts.push(fields[0]);
+        }
       }
+      console.log('scouts',$scouts);
+      $('input[name=scoutName]').remove();
     }
-    console.log('scouts',$scouts);
+    catch(err) {
+      console.log("caught in scoutName")
+      $('select[name=scoutName]').remove();
+    }
   });
 }
 function setTime(val){
@@ -108,10 +126,15 @@ function check() {
   });
 }
 function writeToCSV(){
+  if ($('#scoutName').val()){
+    var scoutname = $('#scoutName').val().replace(/(\r\n|\n|\r)/gm, "");
+  }else {
+    var scoutnmae = '';
+  }
   $data = [
     $('#matchNumber').val(),
     $('#teamNumber').val(),
-    $('select[name=scoutName]').val().replace(/(\r\n|\n|\r)/gm, ""),
+    ,
     $('input[name=attendance]:checked').val()=='on' ? 'Yes' : 'No',
     $('input[name=sand-qd]:checked').val(),
     $('input[name=sand-hp]:checked').val(),
@@ -137,6 +160,9 @@ function writeToCSV(){
     $('input[name=neg-stopped]:checked').val()=='on' ? 'Yes (Checked)' : 'No',
     $('input[name=performance]:checked').val(),
     $('textarea[name=endgameComments]').val(),
+
+
+
   ];
   console.log('RAW DATA',$data)
   $csv.push(String($data));
@@ -164,13 +190,40 @@ function textToClipboard (text) {
     document.execCommand("copy");
     document.body.removeChild(dummy);
 }
+function checkReq(){
+  console.log($('select[name=teamNumber]').val(),$('input[name=teamNumber]').val()!='',$('#matchNumber').val()!='')
+  if(
+    ($('select[name=teamNumber]').val() || $('input[name=teamNumber]').val()!='') && $('#matchNumber').val()!=''){
+    $('.alert').removeClass('alert');
+    $requiredSatisfied = true;
+    $('#submit-form').val('Add scout form to match, and clear form');
+  }
+  else {
+    $('#submit-form').addClass('alert');
+    $('#submit-form').val('Fill in Team# and Match#');
+    $requiredSatisfied = false;
+  }
+}
 
+$('input[name=matchNumber]').on("change paste keyup",function(){
+  checkReq();
+})
+$('input[name=teamNumber]').on("change paste keyup",function(){
+  checkReq();
+})
+$('select[name=teamNumber]').on("change paste keyup",function(){
+  checkReq();
+})
 $('#submit-form').click(function(){
-  writeToCSV();
-  saveToCSVFile($data);
-  clearValues();
-  $forms+=1;
-  $('#formCount').html($forms);
+  if($requiredSatisfied){
+    writeToCSV();
+    saveToCSVFile($data);
+    clearValues();
+    $forms+=1;
+    $('#formCount').html($forms);
+  } else {
+    checkReq();
+  }
 });
 $('#newMatch').click(function(){
   textToClipboard($csv.join('\n'))
@@ -191,9 +244,13 @@ function saveToCSVFile(v){
 });
 }
 function readFile(fileName){
-  $fs.readFile($homedir+'/'+fileName, 'utf8', function(err, contents) {
-    return contents;
-  });
+  try{
+    $fs.readFile($homedir+'/'+fileName, 'utf8', function(err, contents) {
+      return contents;
+    });
+  }
+  catch(err) {
+  }
 }
 function clearCSV(element){
   $('#csv').empty();
@@ -202,6 +259,7 @@ function clearCSV(element){
   $data = [];
 }
 function clearValues(){
+  $requiredSatisfied = false;
   var $matchNumber = $('#matchNumber').val();
   $('input[type=number]').val('0');
   $('input[type=text]').val('');
@@ -211,7 +269,9 @@ function clearValues(){
   $('#matchNumber').val($matchNumber);
   $('input').prop( "checked",false );
   $('select').prop( "checked",false );
-  $('#teamNumber').val('Pick a team');
-  $('#scoutName').val('Pick a scout');
-
+  $('input[name=teamNumber]').val('');
+  $('select[name=teamNumber]').val('Pick a team');
+  $('#scoutName').val('');
+  $('.button-group input[value*=Didn]').prop('checked', true);
+  $('.button-group input[value*="N/A"]').prop('checked', true);
 }

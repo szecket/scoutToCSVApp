@@ -26,14 +26,19 @@ jQuery( document ).ready(function( $ ) {
   clearCSV();
   clearValues();
   $('#formCount').html($forms);
-  parseTeams();
   parseScouts();
+  parseTeams();
   console.log('READY!')
   clearValues();
 });
 
+$('#parse').click(function(){
+  parseTeams();
+});
+
 function parseTeams(){
-  $fs.readFile($homedir+'/scouting/teams.csv', 'utf8', function(err, contents) {
+  var event = $('#event').val()
+  $fs.readFile($homedir+'/scouting/'+event+'.csv', 'utf8', function(err, contents) {
     try{
       var rawdata = contents.split(/\n+/);
       $('select[name=teamNumber]').empty()
@@ -44,7 +49,7 @@ function parseTeams(){
       }));
       for (var i=0;i<rawdata.length;i++){
         var fields = rawdata[i].split(',');
-        if (i>0){
+        if (i>5){
           $('select[name=teamNumber]')
           .append($("<option>",{
             value:fields[0],
@@ -56,13 +61,16 @@ function parseTeams(){
       }
       $('select[name=teamNumber]').val('Pick a team');
       console.log('teams',$teams);
-      $('input[name=teamNumber]').remove();
+      $('select[name=teamNumber]').show();
+      $('input[name=teamNumber]').hide();
     }
     catch(err) {
       console.log("caught in teamNumber")
-      $('select[name=teamNumber]').remove();
+      $('input[name=teamNumber]').show();
+      $('select[name=teamNumber]').hide();
     }
-    $('#teamNumber').val('');
+      $('input[name=teamNumber]').val();
+      $('select[name=teamNumber]').val();
   });
 }
 function parseScouts(){
@@ -126,15 +134,22 @@ function check() {
   });
 }
 function writeToCSV(){
+  var scoutnmae;
+  var teamname;
   if ($('#scoutName').val()){
-    var scoutname = $('#scoutName').val().replace(/(\r\n|\n|\r)/gm, "");
+    scoutname = $('#scoutName').val().replace(/(\r\n|\n|\r)/gm, "");
   }else {
-    var scoutnmae = '';
+    scoutname = '';
+  }
+  if ($('input[name=teamNumber]:visible')){
+    teamname =  $('input[name=teamNumber]').val();
+  } else {
+    teamname =  $('select[name=teamNumber]').val();
   }
   $data = [
     $('#matchNumber').val(),
     $('#teamNumber').val(),
-    ,
+    scoutname,
     $('input[name=attendance]:checked').val()=='on' ? 'Yes' : 'No',
     $('input[name=sand-qd]:checked').val(),
     $('input[name=sand-hp]:checked').val(),

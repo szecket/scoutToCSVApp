@@ -9,6 +9,9 @@ var $matchNumber = 0;
 var $forms = 0;
 var $teams = [];
 var $scouts = [];
+var $authkey;
+var $schedule;
+var $eventEntered;
 var $requiredSatisfied = false;
 const $fs = require('fs');
 const $os = require('os');
@@ -38,6 +41,26 @@ $('#parse').click(function(){
 
 function parseTeams(){
   var event = $('#event').val()
+  var call;
+  authKey();
+  console.log('authkey',$authkey);
+  call = "https://www.thebluealliance.com/api/v3/event/2019"+event.toLowerCase()+"/matches/simple?X-TBA-Auth-Key="+$authkey
+  // $.getJSON( "https://www.thebluealliance.com/api/v3/event/2019"+event.toLowerCase()+"/matches/simple?X-TBA-Auth-Key=aRkTBqsZnxKNEFzO5rz7ueL7LD1VnxLfQrlOVOQce8LylefHk5lUpA7XJmX7L8hA",function( data ) {
+  $.getJSON( call,function( data ) {
+    const keys = Object.keys(data)
+    var matches={};
+    var alliances;
+    for (const key of keys) {
+      alliances = data[key].alliances.blue.team_keys.join(',')+','+data[key].alliances.red.team_keys.join(',');
+      matches[data[key].match_number]={
+        'match':data[key].match_number,
+        'teams':alliances.split(','),
+      };
+    }
+    $schedule = matches;
+    console.log('DATA',data);
+    console.log('define schedule',$schedule)
+  });
   $fs.readFile($homedir+'/scouting/'+event+'.csv', 'utf8', function(err, contents) {
     try{
       var rawdata = contents.split(/\n+/);
@@ -63,8 +86,10 @@ function parseTeams(){
       console.log('teams',$teams);
       $('select[name=teamNumber]').show();
       $('input[name=teamNumber]').hide();
+      $eventEntered = true;
     }
     catch(err) {
+      $eventEntered = false;
       console.log("caught in teamNumber")
       $('input[name=teamNumber]').show();
       $('select[name=teamNumber]').hide();
@@ -72,6 +97,16 @@ function parseTeams(){
       $('input[name=teamNumber]').val();
       $('select[name=teamNumber]').val();
   });
+}
+function authKey(){
+  $fs.readFile($homedir+'/scouting/authkey.txt', 'utf8', function(err, contents) {
+    try{
+      console.log('read the file and got ',contents)
+      $authkey = contents;
+    } catch(err){
+      console.log('authkey failed')
+    }
+  })
 }
 function parseScouts(){
   $fs.readFile($homedir+'/scouting/scouts.csv', 'utf8', function(err, contents) {
@@ -141,14 +176,14 @@ function writeToCSV(){
   }else {
     scoutname = '';
   }
-  if ($('input[name=teamNumber]:visible')){
-    teamname =  $('input[name=teamNumber]').val();
-  } else {
+  if ($eventEntered){
     teamname =  $('select[name=teamNumber]').val();
+  } else {
+    teamname =  $('input[name=teamNumber]').val();
   }
   $data = [
     $('#matchNumber').val(),
-    $('#teamNumber').val(),
+    teamname ,
     scoutname,
     $('input[name=attendance]:checked').val()=='on' ? 'Yes' : 'No',
     $('input[name=sand-qd]:checked').val(),
@@ -206,6 +241,10 @@ function textToClipboard (text) {
     document.body.removeChild(dummy);
 }
 function checkReq(){
+  $matchNumber = $('#matchNumber').val();
+  if ($eventEntered){hintTeams();}
+  // console.log('schedule',$schedule[$matchNumber-1])
+  console.log('schedule',$schedule)
   console.log($('select[name=teamNumber]').val(),$('input[name=teamNumber]').val()!='',$('#matchNumber').val()!='')
   if(
     ($('select[name=teamNumber]').val() || $('input[name=teamNumber]').val()!='') && $('#matchNumber').val()!=''){
@@ -217,6 +256,22 @@ function checkReq(){
     $('#submit-form').addClass('alert');
     $('#submit-form').val('Fill in Team# and Match#');
     $requiredSatisfied = false;
+  }
+}
+function hintTeams(){
+  $('#teamNumber option').css('display','visible');
+  $('.highlighted').removeClass('highlighted');
+  if ($schedule[$matchNumber]!=undefined){
+    console.log('match',$matchNumber,'schedule',$schedule[$matchNumber])
+    $('#teamNumber option').css('display','none');
+    for (var team in $schedule[$matchNumber].teams){
+      var numericTeam = $schedule[$matchNumber].teams[team].slice(3);
+      console.log('team',$schedule[$matchNumber].teams[team],numericTeam)
+      $('option[value='+numericTeam+']').addClass('highlighted');
+      $('option[value='+numericTeam+']').css('display','block');
+    }
+  } else {
+      console.log('not messing with team#s')
   }
 }
 
@@ -251,7 +306,7 @@ $('#newMatch').click(function(){
 });
 function saveToCSVFile(v){
   // $fs.appendFile($app.getAppPath()+"/../../../scouting/match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
-  $fs.appendFile($homedir+"/scouting/match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
+  $fs.appendFile($homedir+"/scouting/"+$('#event').val()+"_match_"+$('#matchNumber').val()+".csv", v+$os.EOL, function(err) {
     if(err) {
         return console.log(err);
     }
@@ -267,6 +322,7 @@ function readFile(fileName){
   catch(err) {
   }
 }
+
 function clearCSV(element){
   $('#csv').empty();
   $('#csv').val('');
@@ -275,7 +331,6 @@ function clearCSV(element){
 }
 function clearValues(){
   $requiredSatisfied = false;
-  var $matchNumber = $('#matchNumber').val();
   $('input[type=number]').val('0');
   $('input[type=text]').val('');
   $('textarea').val('')

@@ -8,19 +8,18 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <form id='scoutingForm' onsubmit="check()">
+  <div>
     <div class="grid-x">
       <div class="cell small-12" data-sticky-container>
         <div class="callout dark tight sticky" data-options="stickyOn: small" data-sticky data-margin-top="0">
-          <div class="grid-x grid-padding-x">
-            <div class='cell small-3  text-center'>
-                <div class=' round toggle grid-x grid-padding-x'>
+          <div class='grid-x grid-padding-x'>
+            <div class='cell small-3'>
+              <div class=' round toggle grid-x grid-padding-x'>
                 <input id='event' placeholder='Event CODE' class='cell auto warning' type='text' />
                 <input id='parse' class='cell small-2 warning button ' type='button' value="Go" />
               </div>
             </div>
             <div class='cell small-3  text-center'>
-
               <input id='submit-form' class='success button ' type='button' value="Add scout form to match, and clear form" />
             </div>
             <div class='cell small-3'><div id='formCount'></div> forms filled out since last copy</div>
@@ -46,10 +45,8 @@
               <div class='callout warning'>
                 <div class=" grid-x grid-padding-x">
                   <div class="medium-12 cell">
-                    <label>Scout Name</label>
-                    <select  class='required' placeholder='Name...' id='scoutName' name='scoutName'>
-                    </select>
-                    <input type="text" placeholder='Name...' step='1' name='scoutName' id='scoutName'  />
+                    <label>Match Number</label>
+                    <input type="number" step='1' name='matchNumber' id='matchNumber'  />
                   </div>
                   <div class="medium-12 cell">
                     <label>Team Number</label>
@@ -58,8 +55,10 @@
                     <input type="number" step='1' placeholder='Team #...' name='teamNumber' id='teamNumber'  />
                   </div>
                   <div class="medium-12 cell">
-                    <label>Match Number</label>
-                    <input type="number" step='1' name='matchNumber' id='matchNumber'  />
+                    <label>Scout Name</label>
+                    <select  class='required' placeholder='Name...' id='scoutName' name='scoutName'>
+                    </select>
+                    <input type="text" placeholder='Name...' step='1' name='scoutName' id='scoutName'  />
                   </div>
                   <div class="auto cell">
                     <div class="switch ">
@@ -807,7 +806,7 @@
 
         </div>
       </div>
-    </form>
+    </div>
 
     <script>
       // You can also require other files to run in this process
